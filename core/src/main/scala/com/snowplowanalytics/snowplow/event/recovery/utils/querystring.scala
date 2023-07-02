@@ -25,7 +25,9 @@ import domain._
 object querystring {
 
   def params(qs: String) = {
-    val parsed = parsec.querystring.parse(qs).map(_.toMap).done
+    // If the qs provided starts with an "&" character then remove it (Specific for Eaze pixels)
+    val cleanedQs = if (qs.startsWith("&")) qs.drop(1) else qs
+    val parsed = parsec.querystring.parse(cleanedQs).map(_.toMap).done
     (parsed.either match {
       case Right(r) if r.isEmpty => Left("empty")
       case Right(r)              => Right(r)
