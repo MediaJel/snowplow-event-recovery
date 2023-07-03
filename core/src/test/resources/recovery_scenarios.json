@@ -1,6 +1,20 @@
 {
   "schema": "iglu:com.snowplowanalytics.snowplow/recoveries/jsonschema/4-0-0",
   "data": {
+        "iglu:com.snowplowanalytics.snowplow.badrows/collector_payload_format_violation/jsonschema/1-0-0": [
+      {
+        "name": "nuid",
+        "conditions": [],
+        "steps": [
+          {
+            "op": "Replace",
+            "path": "$.querystring.nuid",
+            "match": "^(?!^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$).*$",
+            "value": "00000000-0000-4000-A000-000000000000"
+          }
+        ]
+      }
+    ],
     "iglu:com.snowplowanalytics.snowplow.badrows/adapter_failures/jsonschema/1-0-*": [
       {
         "name": "zero",
@@ -215,13 +229,6 @@
             }
           }
         ],
-        "steps": []
-      }
-    ],
-    "iglu:com.snowplowanalytics.snowplow.badrows/collector_payload_format_violation/jsonschema/1-0-0": [
-      {
-        "name": "passthrough",
-        "conditions": [],
         "steps": []
       }
     ]
