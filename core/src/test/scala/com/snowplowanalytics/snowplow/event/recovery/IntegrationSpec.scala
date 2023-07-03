@@ -40,6 +40,7 @@ import gens.idClock
 import com.snowplowanalytics.snowplow.enrich.common.utils.BlockerF
 
 import com.snowplowanalytics.snowplow.event.recovery.{execute => recoveryExecute}
+
 class IntegrationSpec extends AnyWordSpec with Inspectors {
   private val resolverConfig = """{
     "schema": "iglu:com.snowplowanalytics.iglu/resolver-config/jsonschema/1-0-1",

@@ -115,12 +115,14 @@ object recoverable {
         private[this] def recoverBase64EncodedPayload(b: CPFormatViolation) =
           base64.decode(b.payload.event).flatMap(thrift.deserialize).flatMap(cocoerce)
 
-        private[this] def recoverQuery(b: CPFormatViolation) =
+        private[this] def recoverQuery(b: CPFormatViolation) = {
           for {
             msg     <- querystring(b)
             params  <- params(msg).map(_.mapValues(clean))
             payload <- mkPayload(b.payload, params)
           } yield payload
+        }
+
 
         private[this] def querystring(b: CPFormatViolation) =
           orBadRow(b.payload.event, "nullified payload line".some)

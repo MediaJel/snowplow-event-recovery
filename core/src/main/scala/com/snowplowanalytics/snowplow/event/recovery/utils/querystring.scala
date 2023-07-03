@@ -25,7 +25,9 @@ import domain._
 object querystring {
 
   def params(qs: String) = {
-    val parsed = parsec.querystring.parse(qs).map(_.toMap).done
+    val cleanedQs = if (qs.startsWith("&")) qs.drop(1) else qs
+    val parsed = parsec.querystring.parse(cleanedQs).map(_.toMap).done
+    
     (parsed.either match {
       case Right(r) if r.isEmpty => Left("empty")
       case Right(r)              => Right(r)
@@ -33,11 +35,15 @@ object querystring {
     }).leftMap(err => unexpectedFormat(qs, err.some))
   }
 
-  def clean(param: String) =
-    parsec.queryparam.parse(param).done.option.map(_.map(QueryChar.normalize).mkString).getOrElse("")
+  def clean(param: String): String = {
+    val cleanedParam = if (param.startsWith("&")) param.drop(1) else param
+    parsec.queryparam.parse(cleanedParam).done.option.map(_.map(QueryChar.normalize).mkString).getOrElse("")
+  }
+
 
   // FIXME use parser combinator
-  def toNVP(s: String) = {
+  def toNVP(s: String): List[NVP] = {
+    val cleanedString = if (s.startsWith("&")) s.drop(1) else s
     val Empty      = List.empty
     val urlDecoded = (s: String) => URLDecoder.decode(s, UTF_8.toString())
     val toNVP = (s: String) =>
@@ -52,7 +58,7 @@ object querystring {
         case _                    => Empty
       }
     val split = (s: String) => s.split("&").toList.flatMap(toNVP)
-    Option(s).map(split).getOrElse(Empty)
+    Option(cleanedString).map(split).getOrElse(Empty)
   }
 
   def toNVP(params: Map[String, String]) =
